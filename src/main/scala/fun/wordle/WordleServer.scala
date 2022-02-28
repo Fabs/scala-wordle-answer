@@ -29,10 +29,12 @@ object WordleServer {
       // With Middlewares in place
       finalHttpApp = Logger.httpApp(true, true)(httpApp)
 
+      p = scala.util.Properties.envOrElse("PORT", "8080")
+
       exitCode <- Stream.resource(
         EmberServerBuilder.default[F]
           .withHost(ipv4"0.0.0.0")
-          .withPort(port"8080")
+          .withPort(Port.fromString(p).get)
           .withHttpApp(finalHttpApp)
           .build >>
         Resource.eval(Async[F].never)
